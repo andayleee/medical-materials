@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: medical-materials
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://127.0.0.1:5433/medical_materials}
+    username: ${DB_USER:materials_app}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+server:
+  address: 127.0.0.1
+  port: ${SERVER_PORT:8080}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

@@ -1,0 +1,36 @@
+:root {
+    color-scheme: light;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #183b43;
+    background: #f4f8f8;
+    line-height: 1.6;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+.header, .layout, .footer { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+.header { display: flex; align-items: center; justify-content: space-between; padding-block: 28px; gap: 20px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; color: inherit; font-size: 22px; font-weight: 700; text-decoration: none; }
+.brand-icon { position: relative; width: 38px; height: 38px; flex-shrink: 0; border-radius: 12px; background: #14766d; }
+.brand-icon::before, .brand-icon::after { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 1px; }
+.brand-icon::before { width: 18px; height: 3px; }
+.brand-icon::after { width: 3px; height: 18px; }
+.brand:focus-visible { outline: 3px solid #14766d; outline-offset: 6px; border-radius: 4px; }
+.header-caption, .footer { color: #5a7279; font-size: 14px; }
+.layout { flex: 1; display: grid; grid-template-columns: 1.3fr 1fr; align-items: center; gap: 72px; padding-block: 64px 96px; }
+.eyebrow { color: #14766d; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h1 { font-size: clamp(32px, 4vw, 48px); line-height: 1.15; letter-spacing: -.035em; margin: 20px 0; }
+.description { max-width: 490px; color: #526d75; font-size: 18px; }
+.features { padding-left: 22px; margin-top: 30px; color: #395c64; }
+.features li { padding: 5px 0 5px 4px; }
+.features li::marker { color: #14766d; }
+.welcome-card { background: white; border: 1px solid #dae6e5; border-radius: 24px; padding: 38px; box-shadow: 0 20px 60px #183b4309; }
+.badge { display: inline-block; background: #e9f4ef; color: #256b51; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
+h2 { font-size: 28px; letter-spacing: -.025em; margin: 24px 0 10px; line-height: 1.25; }
+.welcome-card p { color: #526d75; }
+.notice { margin-top: 28px; border-top: 1px solid #e5eeed; padding-top: 20px; color: #526d75; font-size: 14px; }
+.footer { padding-block: 22px; border-top: 1px solid #dae6e5; }
+@media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; gap: 36px; padding-block: 30px 48px; }
+    .welcome-card { padding: 28px; }
+    .header-caption { display: none; }
+}

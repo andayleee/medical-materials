@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — учёт материалов</title>
+    <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}">
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="/" th:href="@{/}" aria-label="МедУчёт — главная">
+            <span class="brand-icon" aria-hidden="true"></span> МедУчёт
+        </a>
+        <span class="header-caption">Учёт материалов</span>
+    </header>
+    <main class="layout">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">Для медицинского учреждения</p>
+            <h1 id="page-title">Порядок в материалах.<br>Точность в учёте.</h1>
+            <p class="description">Система автоматизированного учёта материалов: поступления,
+                выдачи и остатки в одном месте.</p>
+            <ul class="features" aria-label="Возможности системы в разработке">
+                <li>Единый справочник материалов</li>
+                <li>Учёт движения по подразделениям</li>
+                <li>Контроль остатков и отчётность</li>
+            </ul>
+        </section>
+        <section class="welcome-card" aria-labelledby="welcome-title">
+            <span class="badge">Система в разработке</span>
+            <h2 id="welcome-title">Добро пожаловать</h2>
+            <p>Здесь появится вход в систему для сотрудников учреждения.</p>
+            <div class="notice">Авторизация будет доступна на следующем этапе разработки.</div>
+        </section>
+    </main>
+    <footer class="footer">МедУчёт · Система учёта материалов медицинского учреждения</footer>
+</body>
+</html>

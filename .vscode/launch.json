@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MaterialsApplication<medical-materials>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ru.vkr.materials.MaterialsApplication",
+            "projectName": "medical-materials",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
