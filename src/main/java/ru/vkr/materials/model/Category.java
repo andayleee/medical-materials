@@ -13,6 +13,12 @@ public class Category {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Version
+    @Column(name = "record_version", nullable = false)
+    private long version;
+
+    public long getVersion() { return version; }
+
     public Category() {
     }
 

@@ -30,6 +30,12 @@ public class Material {
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
 
+    @Version
+    @Column(name = "record_version", nullable = false)
+    private long version;
+
+    public long getVersion() { return version; }
+
     public Material() {
     }
 

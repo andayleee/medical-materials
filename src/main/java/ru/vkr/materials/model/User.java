@@ -30,6 +30,17 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
 
+    @Column(name = "password_change_required", nullable = false)
+    private boolean passwordChangeRequired;
+
+    @Version
+    @Column(name = "security_version", nullable = false)
+    private long securityVersion;
+
+    public boolean isPasswordChangeRequired() { return passwordChangeRequired; }
+    public void setPasswordChangeRequired(boolean required) { this.passwordChangeRequired = required; }
+    public long getSecurityVersion() { return securityVersion; }
+
     public User() {
     }
 

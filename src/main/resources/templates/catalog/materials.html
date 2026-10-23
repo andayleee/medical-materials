@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Материалы</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Справочники"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/catalog/materials}">Материалы</a><a class="text-link"
+                th:href="@{/catalog/units}">Единицы измерения</a><a class="text-link"
+                th:href="@{/catalog/categories}">Категории</a></nav>
+        <div class="page-heading">
+            <h1>Материалы</h1><a class="button" th:if="${canEditMaterials}"
+                th:href="@{/admin/catalog/materials/new}">Добавить материал</a>
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <form class="search-form" th:action="@{/catalog/materials}" method="get"><label for="q">Поиск по коду или
+                названию</label>
+            <div class="actions"><input id="q" name="q" type="search" maxlength="100" th:value="${q}"><button
+                    class="button" type="submit">Найти</button><a class="text-link"
+                    th:href="@{/catalog/materials}">Сбросить</a></div><label class="checkbox-label"><input
+                    type="checkbox" name="showArchived" value="true" th:checked="${showArchived}"> Показывать
+                архивные</label>
+        </form>
+        <p class="muted">Найдено: <span th:text="${result.totalElements}"></span></p>
+        <div class="table-scroll">
+            <table class="data-table">
+                <caption class="sr-only">Материалы лаборатории</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Код / название</th>
+                        <th scope="col">Категория</th>
+                        <th scope="col">Ед. изм.</th>
+                        <th scope="col">Срок годности</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col" th:if="${canEditMaterials}">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${result.content}" th:classappend="${!row.active} ? 'archived-row' : ''">
+                        <td><strong th:text="${row.code}"></strong><br><span th:text="${row.name}"></span></td>
+                        <td th:text="${row.category}"></td>
+                        <td th:text="${row.unit}"></td>
+                        <td th:text="${row.hasExpiry ? 'Учитывается по партиям' : 'Не учитывается'}"></td>
+                        <td th:text="${row.active ? 'Активен' : 'В архиве'}"></td>
+                        <td th:if="${canEditMaterials}"><a class="text-link"
+                                th:href="@{/admin/catalog/materials/{id}/edit(id=${row.id})}">Изменить</a></td>
+                    </tr>
+                    <tr th:if="${result.empty}">
+                        <td colspan="6">Материалы не найдены.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="actions pagination" aria-label="Страницы материалов"><a class="text-link"
+                th:if="${result.hasPrevious()}"
+                th:href="@{/catalog/materials(q=${q},showArchived=${showArchived},page=${result.number - 1})}">←
+                Назад</a><span th:if="${result.totalPages > 0}"
+                th:text="|Страница ${result.number + 1} из ${result.totalPages}|"></span><a class="text-link"
+                th:if="${result.hasNext()}"
+                th:href="@{/catalog/materials(q=${q},showArchived=${showArchived},page=${result.number + 1})}">Далее
+                →</a></nav>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

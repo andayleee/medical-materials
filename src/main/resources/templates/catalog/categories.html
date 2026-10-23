@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Категории</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Справочники"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/catalog/materials}">Материалы</a><a class="text-link"
+                th:href="@{/catalog/units}">Единицы измерения</a><a class="text-link"
+                th:href="@{/catalog/categories}">Категории</a></nav>
+        <div class="page-heading">
+            <h1>Категории</h1><a class="button" th:if="${canEditCatalog}"
+                th:href="@{/admin/catalog/categories/new}">Добавить категорию</a>
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <form class="search-form" th:action="@{/catalog/categories}" method="get"><label for="q">Поиск по
+                названию</label>
+            <div class="actions"><input id="q" name="q" type="search" maxlength="100" th:value="${q}"><button
+                    class="button" type="submit">Найти</button><a class="text-link"
+                    th:href="@{/catalog/categories}">Сбросить</a></div>
+        </form>
+        <p class="muted">Найдено: <span th:text="${#lists.size(categories)}"></span></p>
+        <div class="table-scroll">
+            <table class="data-table">
+                <caption class="sr-only">Категории</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Название</th>
+                        <th scope="col" th:if="${canEditCatalog}">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${categories}">
+                        <td th:text="${row.name}"></td>
+                        <td th:if="${canEditCatalog}"><a class="text-link"
+                                th:href="@{/admin/catalog/categories/{id}/edit(id=${row.id})}">Изменить</a></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(categories)}">
+                        <td colspan="3">Записи не найдены.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

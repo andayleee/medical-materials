@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WelcomeController {
     @GetMapping("/api/info")
     public Map<String, String> info() {
-        return Map.of("name", "Система автоматизированного учета материалов в медицинском учреждении", "version", "0.0.1");
+        return Map.of("name", "Система автоматизированного учета материалов в медицинском учреждении", "version",
+                "0.0.1");
     }
 }

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>МедУчёт — удаление пользователя</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+<body>
+<header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span> МедУчёт</a></header>
+<main class="workspace"><a class="text-link" th:href="@{/admin/users}">← Пользователи</a><h1>Удалить пользователя?</h1>
+    <section class="editor-form"><p><strong th:text="${user.fullName}"></strong> · <span th:text="${user.login}"></span></p><p>Учётная запись будет удалена без возможности восстановления. Если пользователь связан с документами, вместо удаления его нужно отключить.</p>
+    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post"><input type="hidden" name="version" th:value="${user.version}"><div class="actions"><button class="button button-danger" type="submit">Удалить пользователя</button><a class="text-link" th:href="@{/admin/users}">Отмена</a></div></form></section>
+</main><footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body></html>

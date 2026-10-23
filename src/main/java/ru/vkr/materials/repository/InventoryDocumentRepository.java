@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.vkr.materials.model.InventoryDocument;
 
 public interface InventoryDocumentRepository extends JpaRepository<InventoryDocument, Long> {
+    boolean existsByAuthor_Id(Long authorId);
 }

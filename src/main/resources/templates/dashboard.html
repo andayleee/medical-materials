@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — главная</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header">
+        <a class="brand" th:href="@{/dashboard}" aria-label="МедУчёт — главная"><span class="brand-icon"
+                aria-hidden="true"></span> МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <p class="eyebrow">Личный кабинет</p>
+        <h1>Здравствуйте, <span th:text="${fullName}">сотрудник</span>!</h1>
+        <p class="description">Вы вошли как <strong th:text="${roleName}">сотрудник</strong>.</p>
+        <p th:if="${isAdmin}"><a class="button" th:href="@{/admin/users}">Управление пользователями</a></p>
+        <section class="welcome-card" aria-labelledby="next-title">
+            <span class="badge">Справочники</span>
+            <h2 id="next-title">Рабочее пространство лаборатории</h2>
+            <p>Просматривайте материалы, категории и единицы измерения.</p>
+            <nav class="actions" aria-label="Справочники"><a class="text-link"
+                    th:href="@{/catalog/materials}">Материалы</a><a class="text-link"
+                    th:href="@{/catalog/units}">Единицы измерения</a><a class="text-link"
+                    th:href="@{/catalog/categories}">Категории</a></nav>
+            <p class="notice">Поступления, выдачи и остатки — следующий этап разработки.</p>
+        </section>
+    </main>
+    <footer class="footer">МедУчёт · Система учёта материалов медицинской лаборатории</footer>
+</body>
+
+</html>

@@ -16,6 +16,12 @@ public class Unit {
     @Column(name = "symbol", nullable = false, length = 32)
     private String symbol;
 
+    @Version
+    @Column(name = "record_version", nullable = false)
+    private long version;
+
+    public long getVersion() { return version; }
+
     public Unit() {
     }
 
