@@ -28,7 +28,12 @@
                     th:href="@{/catalog/materials}">Материалы</a><a class="text-link"
                     th:href="@{/catalog/units}">Единицы измерения</a><a class="text-link"
                     th:href="@{/catalog/categories}">Категории</a></nav>
-            <p class="notice">Поступления, выдачи и остатки — следующий этап разработки.</p>
+            <h2>Складской учёт</h2>
+            <p><a class="text-link" th:href="@{/reports}">Отчёты и контроль сроков годности</a></p>
+            <nav class="actions" aria-label="Складской учёт"><a class="text-link"
+                    th:href="@{/operations}">Документы</a><a class="text-link" th:href="@{/operations/journal}">Журнал
+                    операций</a><a class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a
+                    class="text-link" th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
         </section>
     </main>
     <footer class="footer">МедУчёт · Система учёта материалов медицинской лаборатории</footer>

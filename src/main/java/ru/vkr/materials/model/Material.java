@@ -34,7 +34,9 @@ public class Material {
     @Column(name = "record_version", nullable = false)
     private long version;
 
-    public long getVersion() { return version; }
+    public long getVersion() {
+        return version;
+    }
 
     public Material() {
     }

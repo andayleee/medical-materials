@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Документ</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <div class="document-heading">
+            <h1><span th:text="${operationNames[document.type]}"></span> <span th:text="${document.number}"></span></h1>
+            <img class="document-barcode" th:src="@{/operations/{id}/barcode.svg(id=${document.id})}"
+                alt="Штрихкод документа">
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <p class="message message-error" role="alert" th:if="${error}" th:text="${error}"></p>
+        <div class="actions report-toolbar no-print"><button class="button button-secondary" type="button"
+                data-print>Печать / PDF</button><a class="button button-secondary"
+                th:href="@{/operations/{id}/export.csv(id=${document.id})}">CSV для Excel</a></div>
+        <dl class="document-meta">
+            <dt>Дата</dt>
+            <dd th:text="${document.date}"></dd>
+            <dt>Статус</dt>
+            <dd th:text="${document.status.name()=='DRAFT'?'Черновик':'Проведён'}"></dd>
+            <dt>Склад</dt>
+            <dd th:text="${document.warehouse}"></dd>
+            <dt>Поставщик / получатель</dt>
+            <dd th:text="${document.supplier?:document.recipient?:'—'}"></dd>
+            <dt th:if="${document.reason}">Причина списания</dt>
+            <dd th:if="${document.reason}" th:text="${document.reason}"></dd>
+            <dt>Автор</dt>
+            <dd th:text="${document.author}"></dd>
+            <dt th:if="${document.postedAt}">Проведён</dt>
+            <dd th:if="${document.postedAt}"
+                th:text="${#temporals.format(document.postedAt.atZone(T(java.time.ZoneId).of('Europe/Moscow')), 'dd.MM.yyyy HH:mm')}">
+            </dd>
+        </dl>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Материал</th>
+                        <th>Партия</th>
+                        <th>Годен до</th>
+                        <th>Количество</th>
+                        <th>Цена единицы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="i:${items}">
+                        <td><strong th:text="${i.code}"></strong><br><span th:text="${i.material}"></span></td>
+                        <td><span th:text="${i.batch}"></span><br><small th:if="${i.supplierBatch}"
+                                th:text="|Производитель: ${i.supplierBatch}|"></small><br><a class="text-link no-print"
+                                th:if="${canOperate}"
+                                th:href="@{/inventory/batches/{id}/label(id=${i.batchId})}">Этикетка</a></td>
+                        <td th:text="${i.expiresOn?:'—'}"></td>
+                        <td><span th:text="${i.quantity.stripTrailingZeros().toPlainString()}"></span> <span
+                                th:text="${i.unit}"></span></td>
+                        <td th:text="${i.price?:'—'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="actions document-actions" th:if="${canOperate and document.status.name()=='DRAFT'}">
+            <form th:action="@{/inventory/documents/{id}/post(id=${document.id})}" method="post"><input type="hidden"
+                    name="version" th:value="${document.version}"><button class="button">Провести документ</button>
+            </form>
+            <details>
+                <summary class="danger-link">Удалить черновик</summary>
+                <p>Черновик и его строки будут удалены. Остатки не изменятся.</p>
+                <form th:action="@{/inventory/documents/{id}/delete(id=${document.id})}" method="post"><input
+                        type="hidden" name="version" th:value="${document.version}"><button
+                        class="button button-danger">Подтвердить удаление</button></form>
+            </details>
+        </div>
+        <p class="notice" th:if="${document.status.name()=='POSTED'}">Документ проведён. Изменение, удаление и повторное
+            проведение запрещены.</p>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+    <script th:src="@{/js/print.js}" defer></script>
+</body>
+
+</html>

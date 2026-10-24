@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Отчёты</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary">Выйти</button></form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <h1>Отчёты</h1>
+        <p class="description">Проведённые операции, остатки и контроль сроков годности.</p>
+        <div class="report-links">
+            <section class="welcome-card" th:if="${canOperate}">
+                <h2>Сроки годности</h2>
+                <p>Партии с остатком: просроченные и истекающие в выбранный период.</p><a class="button"
+                    th:href="@{/reports/expiry}">Проверить сроки</a>
+            </section>
+            <section class="welcome-card" th:if="${canOperate}">
+                <h2>Остатки на дату</h2>
+                <p>Количество по складам и партиям на конец выбранного дня.</p><a class="button"
+                    th:href="@{/reports/stocks}">Открыть отчёт</a>
+            </section>
+            <section class="welcome-card" th:if="${canOperate}">
+                <h2>Движение материалов</h2>
+                <p>Начальный остаток, поступления, выдачи, списания и конечный остаток за период.</p><a class="button"
+                    th:href="@{/reports/movement}">Открыть отчёт</a>
+            </section>
+            <section class="welcome-card">
+                <h2>Выдачи по подразделениям</h2>
+                <p
+                    th:text="${canOperate ? 'Количество материалов, выданных подразделениям за период.' : 'Материалы, выданные вашему подразделению за период.'}">
+                </p><a class="button" th:href="@{/reports/issues}">Открыть отчёт</a>
+            </section>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+    <script th:src="@{/js/print.js}" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Поставщик</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <h1 th:text="${recordId==null?'Новый поставщик':'Изменить поставщика'}"></h1>
+        <form class="editor-form" th:object="${supplierForm}"
+            th:action="${recordId==null}?@{/inventory/suppliers}:@{/inventory/suppliers/{id}(id=${recordId})}"
+            method="post">
+            <div class="message message-error" role="alert" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li>
+                </ul>
+            </div><input type="hidden" th:field="*{version}"><label for="name">Название</label><input id="name"
+                th:field="*{name}" maxlength="255" required><label for="inn">ИНН (необязательно)</label><input id="inn"
+                th:field="*{inn}" inputmode="numeric" maxlength="12"><label for="contactInfo">Контакты</label><textarea
+                id="contactInfo" th:field="*{contactInfo}" maxlength="1000" rows="3"></textarea><label
+                class="checkbox-label"><input type="checkbox" th:field="*{active}">Поставщик активен</label>
+            <div class="actions"><button class="button">Сохранить</button><a class="text-link"
+                    th:href="@{/inventory/suppliers}">Отмена</a></div>
+        </form>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

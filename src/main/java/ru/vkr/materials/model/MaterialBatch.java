@@ -16,8 +16,12 @@ public class MaterialBatch {
     @JoinColumn(name = "materials_id", nullable = false)
     private Material material;
 
-    @Column(name = "batch_number", nullable = false, length = 100)
+    @org.hibernate.annotations.Generated(event = org.hibernate.generator.EventType.INSERT)
+    @Column(name = "batch_number", nullable = false, length = 100, insertable = false, updatable = false)
     private String batchNumber;
+
+    @Column(name = "supplier_batch_number", length = 100)
+    private String supplierBatchNumber;
 
     @Column(name = "expires_on", nullable = true)
     private LocalDate expiresOn;
@@ -32,6 +36,10 @@ public class MaterialBatch {
         return id;
     }
 
+    public String getBarcode() {
+        return batchNumber;
+    }
+
     public Material getMaterial() {
         return material;
     }
@@ -44,8 +52,12 @@ public class MaterialBatch {
         return batchNumber;
     }
 
-    public void setBatchNumber(String batchNumber) {
-        this.batchNumber = batchNumber;
+    public String getSupplierBatchNumber() {
+        return supplierBatchNumber;
+    }
+
+    public void setSupplierBatchNumber(String value) {
+        supplierBatchNumber = value;
     }
 
     public LocalDate getExpiresOn() {

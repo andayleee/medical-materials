@@ -18,15 +18,20 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserRepository users) throws Exception {
         http.authorizeHttpRequests(access -> access
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                .requestMatchers("/", "/login", "/css/**", "/favicon.ico", "/api/info", "/actuator/health").permitAll()
-                .requestMatchers("/admin/catalog/materials", "/admin/catalog/materials/**").hasAnyRole("ADMIN", "STOREKEEPER")
+                .requestMatchers("/", "/login", "/css/**", "/js/**", "/favicon.ico", "/api/info", "/actuator/health")
+                .permitAll()
+                .requestMatchers("/admin/catalog/materials", "/admin/catalog/materials/**")
+                .hasAnyRole("ADMIN", "STOREKEEPER")
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/reports/stocks", "/reports/stocks.csv", "/reports/movement", "/reports/movement.csv",
+                        "/reports/expiry", "/reports/expiry.csv")
+                .hasAnyRole("ADMIN", "STOREKEEPER")
                 .requestMatchers("/inventory", "/inventory/**").hasAnyRole("ADMIN", "STOREKEEPER")
                 .anyRequest().authenticated())
-            .formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login")
-                .defaultSuccessUrl("/dashboard", true).failureUrl("/login?error").permitAll())
-            .logout(logout -> logout.logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID"))
-            .addFilterBefore(new AccountStateFilter(users), AuthorizationFilter.class);
+                .formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/dashboard", true).failureUrl("/login?error").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID"))
+                .addFilterBefore(new AccountStateFilter(users), AuthorizationFilter.class);
         return http.build();
     }
 }

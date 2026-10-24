@@ -52,8 +52,16 @@ public class InventoryDocument {
     @Column(name = "write_off_reason", nullable = true, length = 1000)
     private String writeOffReason;
 
-    @OneToMany(mappedBy = "document", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "document", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<InventoryDocumentItem> items = new ArrayList<>();
+
+    @Version
+    @Column(name = "record_version", nullable = false)
+    private long version;
+
+    public long getVersion() {
+        return version;
+    }
 
     public InventoryDocument() {
     }
@@ -144,6 +152,10 @@ public class InventoryDocument {
 
     public List<InventoryDocumentItem> getItems() {
         return Collections.unmodifiableList(items);
+    }
+
+    public void clearItems() {
+        items.clear();
     }
 
     public void addItem(InventoryDocumentItem item) {

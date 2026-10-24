@@ -28,18 +28,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 class AuthenticationIT {
-    @Autowired WebApplicationContext context;
-    @Autowired UserRepository users;
-    @Autowired PasswordEncoder passwords;
-    @Autowired AdminCreationService admins;
+    @Autowired
+    WebApplicationContext context;
+    @Autowired
+    UserRepository users;
+    @Autowired
+    PasswordEncoder passwords;
+    @Autowired
+    AdminCreationService admins;
     MockMvc mvc;
     private static final String PASSWORD = "test-password-only-2026";
 
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-        User user = new User(); user.setLogin("auth-test"); user.setFullName("Тестовый сотрудник");
-        user.setPasswordHash(passwords.encode(PASSWORD)); user.setRole(UserRole.STOREKEEPER);
+        User user = new User();
+        user.setLogin("auth-test");
+        user.setFullName("Тестовый сотрудник");
+        user.setPasswordHash(passwords.encode(PASSWORD));
+        user.setRole(UserRole.STOREKEEPER);
         users.saveAndFlush(user);
     }
 
@@ -72,7 +79,8 @@ class AuthenticationIT {
         mvc.perform(formLogin().user("auth-test").password("wrong"))
                 .andExpect(unauthenticated()).andExpect(redirectedUrl("/login?error"));
         User user = users.findByLoginIgnoreCase("auth-test").orElseThrow();
-        user.setActive(false); users.saveAndFlush(user);
+        user.setActive(false);
+        users.saveAndFlush(user);
         mvc.perform(formLogin().user("auth-test").password(PASSWORD))
                 .andExpect(unauthenticated()).andExpect(redirectedUrl("/login?error"));
     }
@@ -98,7 +106,6 @@ class AuthenticationIT {
     @WithMockUser(roles = "STOREKEEPER")
     void storekeeperCannotAccessAdministration() throws Exception {
         mvc.perform(get("/admin/auth-check")).andExpect(status().isForbidden());
-        // No module exists yet: reaching MVC's 404 confirms that security allowed this role.
         mvc.perform(get("/inventory/auth-check")).andExpect(status().isNotFound());
     }
 
@@ -123,8 +130,12 @@ class AuthenticationIT {
 
     @Test
     void databaseRejectsCaseInsensitiveDuplicateLogin() {
-        User duplicate = new User(); duplicate.setLogin("AUTH-TEST"); duplicate.setFullName("Дубликат");
-        duplicate.setPasswordHash("test-only"); duplicate.setRole(UserRole.RECIPIENT);
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> users.saveAndFlush(duplicate));
+        User duplicate = new User();
+        duplicate.setLogin("AUTH-TEST");
+        duplicate.setFullName("Дубликат");
+        duplicate.setPasswordHash("test-only");
+        duplicate.setRole(UserRole.RECIPIENT);
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class,
+                () -> users.saveAndFlush(duplicate));
     }
 }

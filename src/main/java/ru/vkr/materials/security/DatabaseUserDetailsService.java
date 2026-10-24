@@ -11,7 +11,9 @@ import ru.vkr.materials.repository.UserRepository;
 public class DatabaseUserDetailsService implements UserDetailsService {
     private final UserRepository users;
 
-    public DatabaseUserDetailsService(UserRepository users) { this.users = users; }
+    public DatabaseUserDetailsService(UserRepository users) {
+        this.users = users;
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -23,6 +23,7 @@ public class HomeController {
         LaboratoryPrincipal principal = (LaboratoryPrincipal) authentication.getPrincipal();
         model.addAttribute("fullName", principal.fullName());
         model.addAttribute("isAdmin", principal.role() == ru.vkr.materials.model.UserRole.ADMIN);
+        model.addAttribute("canOperate", principal.role() != ru.vkr.materials.model.UserRole.RECIPIENT);
         model.addAttribute("roleName", switch (principal.role()) {
             case ADMIN -> "Администратор";
             case STOREKEEPER -> "Сотрудник склада";

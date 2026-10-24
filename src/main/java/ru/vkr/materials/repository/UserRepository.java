@@ -11,8 +11,11 @@ import jakarta.persistence.LockModeType;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByLoginIgnoreCase(String login);
+
     boolean existsByRole(UserRole role);
+
     long countByRoleAndActiveTrue(UserRole role);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :id")
     Optional<User> findLockedById(Long id);

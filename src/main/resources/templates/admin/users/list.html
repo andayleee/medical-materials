@@ -1,20 +1,76 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>МедУчёт — пользователи</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — пользователи</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
 <body>
-<header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span> МедУчёт</a><form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button></form></header>
-<main class="workspace">
-    <a class="text-link" th:href="@{/dashboard}">← Главная</a>
-    <div class="page-heading"><div><p class="eyebrow">Администрирование</p><h1>Пользователи</h1></div><a class="button" th:href="@{/admin/users/new}">Создать пользователя</a></div>
-    <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
-    <p class="message message-error" role="alert" th:if="${error}" th:text="${error}"></p>
-    <form class="search-form" th:action="@{/admin/users}" method="get"><label for="q">Поиск по имени или логину</label><div class="actions"><input id="q" name="q" type="search" maxlength="100" th:value="${q}" placeholder="Имя или логин"><button class="button" type="submit">Найти</button><a class="text-link" th:href="@{/admin/users}">Сбросить</a></div></form>
-    <p class="muted">Найдено: <span th:text="${result.totalElements}"></span></p>
-    <div class="table-scroll"><table class="data-table"><caption class="sr-only">Пользователи лаборатории</caption><thead><tr><th scope="col">Логин / имя</th><th scope="col">Роль</th><th scope="col">Подразделение</th><th scope="col">Статус</th><th scope="col">Действия</th></tr></thead><tbody>
-    <tr th:each="user : ${result.content}"><td><strong th:text="${user.login}"></strong><br><span th:text="${user.fullName}"></span></td><td th:text="${user.roleName}"></td><td th:text="${user.departmentName}"></td><td><span th:text="${user.active ? 'Активен' : 'Отключён'}"></span><br><small th:if="${user.passwordChangeRequired}">Требуется смена пароля</small></td><td><div class="row-actions"><a class="text-link" th:href="@{/admin/users/{id}/edit(id=${user.id})}">Изменить</a><a class="danger-link" th:href="@{/admin/users/{id}/delete(id=${user.id})}">Удалить</a></div></td></tr>
-    <tr th:if="${result.empty}"><td colspan="5">Пользователи не найдены.</td></tr>
-    </tbody></table></div>
-    <nav class="actions pagination" aria-label="Страницы пользователей"><a class="text-link" th:if="${result.hasPrevious()}" th:href="@{/admin/users(q=${q},page=${result.number - 1})}">← Назад</a><span th:if="${result.totalPages > 0}" th:text="|Страница ${result.number + 1} из ${result.totalPages}|"></span><a class="text-link" th:if="${result.hasNext()}" th:href="@{/admin/users(q=${q},page=${result.number + 1})}">Далее →</a></nav>
-</main>
-<footer class="footer">МедУчёт · Медицинская лаборатория</footer>
-</body></html>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <a class="text-link" th:href="@{/dashboard}">← Главная</a>
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">Администрирование</p>
+                <h1>Пользователи</h1>
+            </div><a class="button" th:href="@{/admin/users/new}">Создать пользователя</a>
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <p class="message message-error" role="alert" th:if="${error}" th:text="${error}"></p>
+        <form class="search-form" th:action="@{/admin/users}" method="get"><label for="q">Поиск по имени или
+                логину</label>
+            <div class="actions"><input id="q" name="q" type="search" maxlength="100" th:value="${q}"
+                    placeholder="Имя или логин"><button class="button" type="submit">Найти</button><a class="text-link"
+                    th:href="@{/admin/users}">Сбросить</a></div>
+        </form>
+        <p class="muted">Найдено: <span th:text="${result.totalElements}"></span></p>
+        <div class="table-scroll">
+            <table class="data-table">
+                <caption class="sr-only">Пользователи лаборатории</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Логин / имя</th>
+                        <th scope="col">Роль</th>
+                        <th scope="col">Подразделение</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${result.content}">
+                        <td><strong th:text="${user.login}"></strong><br><span th:text="${user.fullName}"></span></td>
+                        <td th:text="${user.roleName}"></td>
+                        <td th:text="${user.departmentName}"></td>
+                        <td><span th:text="${user.active ? 'Активен' : 'Отключён'}"></span><br><small
+                                th:if="${user.passwordChangeRequired}">Требуется смена пароля</small></td>
+                        <td>
+                            <div class="row-actions"><a class="text-link"
+                                    th:href="@{/admin/users/{id}/edit(id=${user.id})}">Изменить</a><a
+                                    class="danger-link" th:href="@{/admin/users/{id}/delete(id=${user.id})}">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${result.empty}">
+                        <td colspan="5">Пользователи не найдены.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="actions pagination" aria-label="Страницы пользователей"><a class="text-link"
+                th:if="${result.hasPrevious()}" th:href="@{/admin/users(q=${q},page=${result.number - 1})}">←
+                Назад</a><span th:if="${result.totalPages > 0}"
+                th:text="|Страница ${result.number + 1} из ${result.totalPages}|"></span><a class="text-link"
+                th:if="${result.hasNext()}" th:href="@{/admin/users(q=${q},page=${result.number + 1})}">Далее →</a>
+        </nav>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

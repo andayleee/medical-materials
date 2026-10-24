@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Проверьте параметры</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary">Выйти</button></form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <h1>Проверьте параметры отчёта</h1>
+        <p class="message message-error" role="alert" th:text="${error}"></p><a class="button" th:href="@{/reports}">К
+            отчётам</a>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+    <script th:src="@{/js/print.js}" defer></script>
+</body>
+
+</html>

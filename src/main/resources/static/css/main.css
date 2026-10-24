@@ -458,3 +458,278 @@ h2 {
 .data-table tr.archived-row .text-link {
     color: #526868;
 }
+
+.editor-form textarea,
+.search-form select,
+.inventory-line input,
+.inventory-line select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #b8cdca;
+    border-radius: 10px;
+    background: white;
+    color: #183b43;
+    font: inherit;
+}
+
+.search-form select {
+    width: auto;
+    max-width: 100%;
+}
+
+.inventory-line {
+    border: 1px solid #b8cdca;
+    border-radius: 12px;
+    margin-block: 20px;
+    padding: 20px;
+    min-width: 0;
+}
+
+.inventory-line legend {
+    padding-inline: 8px;
+    font-weight: 600;
+}
+
+.line-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.line-fields label {
+    display: grid;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.line-fields select {
+    max-width: 100%;
+}
+
+.form-actions {
+    margin-block: 28px;
+}
+
+.document-meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 24px;
+    margin-block: 28px;
+}
+
+.document-meta dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.document-meta dt {
+    font-weight: 600;
+}
+
+.data-table tr.expired-row {
+    background: #fff0f0;
+    color: #8c2020;
+}
+
+.document-actions {
+    margin-top: 24px;
+    align-items: flex-start;
+}
+
+.document-actions>details {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.document-actions>details>summary {
+    padding-block: 12px;
+    cursor: pointer;
+}
+
+.report-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 24px;
+    margin-block: 28px;
+}
+
+.workspace .report-links .welcome-card {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    max-width: none;
+}
+
+.report-links .welcome-card .button {
+    align-self: flex-end;
+    margin-top: auto;
+}
+
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    margin-block: 24px;
+}
+
+.report-filters label {
+    display: grid;
+    gap: 8px;
+    flex: 1 1 180px;
+    min-width: 0;
+    font-weight: 600;
+}
+
+.report-filters input,
+.report-filters select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #b8cdca;
+    border-radius: 10px;
+    background: white;
+    color: #183b43;
+    font: inherit;
+}
+
+.report-toolbar {
+    margin-block: 24px;
+}
+
+.data-table tr.expiring-row {
+    background: #fff7df;
+    color: #715400;
+}
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+    }
+
+    body {
+        display: block;
+        min-height: auto;
+        background: white;
+        color: black;
+        font-size: 10pt;
+    }
+
+    .header,
+    .footer,
+    .no-print,
+    .document-actions,
+    .report-filters,
+    .report-toolbar,
+    main>nav {
+        display: none !important;
+    }
+
+    .workspace {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .workspace h1 {
+        font-size: 20pt;
+        margin-top: 0;
+    }
+
+    .table-scroll {
+        overflow: visible;
+    }
+
+    .data-table {
+        width: 100%;
+        font-size: 9pt;
+    }
+
+    .data-table thead {
+        display: table-header-group;
+    }
+
+    .data-table tr {
+        break-inside: avoid;
+    }
+
+    .data-table td,
+    .data-table th {
+        padding: 6px;
+        overflow-wrap: anywhere;
+        color: black;
+    }
+
+    .message,
+    .notice {
+        break-inside: avoid;
+    }
+
+    a {
+        color: black;
+        text-decoration: none;
+    }
+}
+
+.document-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.document-heading h1 {
+    flex: 1 1 300px;
+}
+
+.document-barcode {
+    width: 220px;
+    height: auto;
+    max-width: 100%;
+    margin: 16px 0 16px auto;
+}
+
+.label-preview {
+    display: block;
+    width: 320px;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #b8cdca;
+    background: white;
+    image-rendering: pixelated;
+    margin-block: 24px;
+}
+
+.scan-panel {
+    margin-block: 24px;
+    padding: 18px;
+    border: 1px solid #b8cdca;
+    border-radius: 12px;
+}
+
+.scan-panel input {
+    padding: 12px;
+    min-width: 0;
+    max-width: 100%;
+    font: inherit;
+}
+
+@media print {
+    .document-heading {
+        flex-wrap: nowrap;
+    }
+
+    .document-heading h1 {
+        flex: 1;
+    }
+
+    .document-barcode {
+        width: 55mm;
+        margin-top: 0;
+        break-inside: avoid;
+    }
+}

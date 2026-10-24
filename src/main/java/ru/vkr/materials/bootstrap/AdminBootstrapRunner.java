@@ -12,17 +12,22 @@ import org.springframework.stereotype.Component;
 public class AdminBootstrapRunner implements ApplicationRunner {
     private final AdminCreationService admins;
 
-    public AdminBootstrapRunner(AdminCreationService admins) { this.admins = admins; }
+    public AdminBootstrapRunner(AdminCreationService admins) {
+        this.admins = admins;
+    }
 
     @Override
     public void run(ApplicationArguments arguments) {
         Console console = System.console();
         if (console == null) {
-            throw new IllegalStateException("Запустите scripts/create-admin.sh в обычном терминале со скрытым вводом пароля");
+            throw new IllegalStateException(
+                    "Запустите scripts/create-admin.sh в обычном терминале со скрытым вводом пароля");
         }
         String login = console.readLine("Логин администратора: ");
         String fullName = console.readLine("Имя / ФИО: ");
-        if (login == null || fullName == null) { throw new IllegalStateException("Создание отменено"); }
+        if (login == null || fullName == null) {
+            throw new IllegalStateException("Создание отменено");
+        }
         char[] password = console.readPassword("Пароль (от 10 символов): ");
         char[] confirmation = null;
         try {
@@ -33,8 +38,12 @@ public class AdminBootstrapRunner implements ApplicationRunner {
             admins.createFirstAdmin(login, fullName, password);
             console.printf("Администратор создан. Теперь запустите ./scripts/run.sh%n");
         } finally {
-            if (password != null) { Arrays.fill(password, '\0'); }
-            if (confirmation != null) { Arrays.fill(confirmation, '\0'); }
+            if (password != null) {
+                Arrays.fill(password, '\0');
+            }
+            if (confirmation != null) {
+                Arrays.fill(confirmation, '\0');
+            }
         }
     }
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Поставщики</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <div class="page-heading">
+            <h1>Поставщики</h1><a class="button" th:href="@{/inventory/suppliers/new}">Добавить поставщика</a>
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <p class="message message-error" role="alert" th:if="${error}" th:text="${error}"></p>
+        <form class="search-form" method="get" th:action="@{/inventory/suppliers}"><label for="q">Название или
+                ИНН</label>
+            <div class="actions"><input id="q" name="q" th:value="${q}" maxlength="100"><button
+                    class="button">Найти</button></div>
+        </form>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>ИНН</th>
+                        <th>Контакты</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s:${suppliers}">
+                        <td th:text="${s.name}"></td>
+                        <td th:text="${s.inn}"></td>
+                        <td th:text="${s.contactInfo}"></td>
+                        <td th:text="${s.active?'Активен':'Отключён'}"></td>
+                        <td><a class="text-link" th:href="@{/inventory/suppliers/{id}/edit(id=${s.id})}">Изменить</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(suppliers)}">
+                        <td colspan="5">Поставщики пока не добавлены.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

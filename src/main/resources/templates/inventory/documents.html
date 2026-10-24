@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Документы</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <div class="page-heading">
+            <h1>Документы</h1>
+            <div class="actions" th:if="${canOperate}"><a class="button"
+                    th:href="@{/inventory/documents/new(type='RECEIPT')}">Поступление</a><a
+                    class="button button-secondary" th:href="@{/inventory/documents/new(type='ISSUE')}">Выдача</a><a
+                    class="button button-secondary" th:href="@{/inventory/documents/new(type='WRITE_OFF')}">Списание</a>
+            </div>
+        </div>
+        <p class="message message-success" role="status" th:if="${success}" th:text="${success}"></p>
+        <p class="message message-error" role="alert" th:if="${error}" th:text="${error}"></p>
+        <p class="muted" th:unless="${canOperate}">Показаны проведённые выдачи только вашему подразделению.</p>
+        <form class="search-form" method="get" th:action="@{/operations}"><label for="q">Поиск по номеру или
+                штрихкоду</label>
+            <div class="actions"><input id="q" name="q" th:value="${q}" maxlength="100"><select name="status"
+                    aria-label="Статус">
+                    <option value="">Все статусы</option>
+                    <option value="DRAFT" th:selected="${status=='DRAFT'}">Черновики</option>
+                    <option value="POSTED" th:selected="${status=='POSTED'}">Проведённые</option>
+                </select><button class="button">Найти</button></div>
+        </form>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Номер / дата</th>
+                        <th>Тип</th>
+                        <th>Склад</th>
+                        <th>Поставщик / получатель</th>
+                        <th>Статус</th>
+                        <th>Автор</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="d:${documents}">
+                        <td><a class="text-link" th:href="@{/operations/{id}(id=${d.id})}"
+                                th:text="${d.number}"></a><br><span th:text="${d.date}"></span></td>
+                        <td th:text="${operationNames[d.type]}"></td>
+                        <td th:text="${d.warehouse}"></td>
+                        <td th:text="${d.supplier?:d.recipient?:'—'}"></td>
+                        <td th:text="${d.status.name()=='DRAFT'?'Черновик':'Проведён'}"></td>
+                        <td th:text="${d.author}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(documents)}">
+                        <td colspan="6">Документы не найдены.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

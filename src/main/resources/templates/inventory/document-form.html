@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Новый документ</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:if="${canOperate}"
+                th:href="@{/inventory/stock}">Остатки</a><a class="text-link" th:if="${canOperate}"
+                th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <h1 th:text="${operationNames[formType]}"></h1>
+        <p class="muted">Черновик не меняет остатки. Проведение применяется целиком и фиксируется в журнале.</p>
+        <form id="inventory-form" th:object="${inventoryForm}" th:action="@{/inventory/documents}" method="post">
+            <div class="message message-error" role="alert" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li>
+                </ul>
+            </div>
+            <input type="hidden" name="type" th:value="${formType}">
+            <div class="editor-form">
+                <label for="number">Номер (пустой — присвоится автоматически)</label><input id="number"
+                    th:field="*{number}" maxlength="64">
+                <label for="documentDate">Дата</label><input id="documentDate" th:field="*{documentDate}" type="date"
+                    required>
+                <label for="warehouseId">Склад</label><select id="warehouseId" th:field="*{warehouseId}" required>
+                    <option value="">Выберите склад</option>
+                    <option th:each="w:${warehouses}" th:value="${w.id}" th:text="${w.name}"></option>
+                </select>
+                <label for="supplierId" th:if="${formType.name()=='RECEIPT'}">Поставщик<select id="supplierId"
+                        th:field="*{supplierId}" required>
+                        <option value="">Выберите поставщика</option>
+                        <option th:each="s:${suppliers}" th:value="${s.id}" th:text="${s.name}"></option>
+                    </select></label>
+                <p th:if="${formType.name()=='RECEIPT' and #lists.isEmpty(suppliers)}">Сначала <a class="text-link"
+                        th:href="@{/inventory/suppliers/new}">добавьте поставщика</a>.</p>
+                <label for="departmentId" th:if="${formType.name()=='ISSUE'}">Подразделение-получатель<select
+                        id="departmentId" th:field="*{departmentId}" required>
+                        <option value="">Выберите подразделение</option>
+                        <option th:each="d:${departments}" th:value="${d.id}" th:text="${d.name}"></option>
+                    </select></label>
+                <label for="writeOffReason" th:if="${formType.name()=='WRITE_OFF'}">Причина списания<textarea
+                        id="writeOffReason" th:field="*{writeOffReason}" maxlength="1000" required></textarea></label>
+            </div>
+            <p th:if="${formType.name()=='ISSUE'}" class="notice">Выдача сразу расходует материалы со склада.
+                Просроченные партии выдавать нельзя.</p>
+            <div class="scan-panel" th:if="${formType.name()!='RECEIPT'}"><label for="batch-scan">Сканировать штрихкод
+                    партии</label>
+                <div class="actions"><input id="batch-scan" type="text" inputmode="numeric" autocomplete="off"
+                        maxlength="12" placeholder="Отсканируйте код и нажмите Enter"><button id="scan-batch"
+                        class="button button-secondary" type="button">Найти партию</button></div>
+                <p id="scan-status" role="status" aria-live="polite"></p>
+            </div>
+            <p th:if="${formType.name()=='RECEIPT'}" class="notice">Внутренний номер партии и штрихкод из 12 цифр будут
+                присвоены автоматически при сохранении.</p>
+            <div id="inventory-lines">
+                <th:block th:each="line,iter:*{lines}">
+                    <fieldset class="inventory-line">
+                        <legend>Позиция</legend>
+                        <div class="line-fields">
+                            <div th:if="${formType.name()=='RECEIPT'}"><label>Материал<select
+                                        th:field="*{lines[__${iter.index}__].materialId}" required>
+                                        <option value="">Выберите материал</option>
+                                        <option th:each="m:${materials}" th:value="${m.id}"
+                                            th:text="|${m.code} · ${m.name}|"></option>
+                                    </select></label></div>
+                            <div th:if="${formType.name()!='RECEIPT'}"><label>Партия<select data-stock
+                                        th:field="*{lines[__${iter.index}__].batchId}" required>
+                                        <option value="">Выберите партию</option>
+                                        <option th:each="s:${stockOptions}" th:value="${s.batchId}"
+                                            th:attr="data-warehouse=${s.warehouseId},data-barcode=${s.barcode}"
+                                            th:disabled="${formType.name()=='ISSUE' and s.expired}"
+                                            th:text="|${s.code} · ${s.material} · партия ${s.batch} · ${s.quantity.stripTrailingZeros().toPlainString()} ${s.unit} · ${s.warehouse}${s.expired ? ' · ПРОСРОЧЕНА' : ''}|">
+                                        </option>
+                                    </select></label></div>
+                            <div th:if="${formType.name()=='RECEIPT'}"><label>Номер партии производителя
+                                    <input placeholder="(необязательно)"
+                                        th:field="*{lines[__${iter.index}__].batchNumber}" maxlength="100"></label>
+                            </div>
+                            <div th:if="${formType.name()=='RECEIPT'}"><label>Годен до<input
+                                        th:field="*{lines[__${iter.index}__].expiresOn}" type="date"></label></div>
+                            <div th:if="${formType.name()=='RECEIPT'}"><label>Цена единицы<input
+                                        placeholder="(необязательно)"
+                                        th:field="*{lines[__${iter.index}__].purchaseUnitPrice}" type="number" min="0"
+                                        step="0.0001"></label></div>
+                            <div><label>Количество<input th:field="*{lines[__${iter.index}__].quantity}" type="number"
+                                        min="0.0001" step="0.0001" required></label></div>
+                        </div><button class="button button-secondary remove-line" type="button">Убрать строку</button>
+                    </fieldset>
+                </th:block>
+            </div>
+            <template id="inventory-line-template">
+                <fieldset class="inventory-line">
+                    <legend>Позиция</legend>
+                    <div class="line-fields">
+                        <div th:if="${formType.name()=='RECEIPT'}"><label>Материал<select
+                                    name="lines[__index__].materialId" required>
+                                    <option value="">Выберите материал</option>
+                                    <option th:each="m:${materials}" th:value="${m.id}"
+                                        th:text="|${m.code} · ${m.name}|"></option>
+                                </select></label></div>
+                        <div th:if="${formType.name()!='RECEIPT'}"><label>Партия<select data-stock
+                                    name="lines[__index__].batchId" required>
+                                    <option value="">Выберите партию</option>
+                                    <option th:each="s:${stockOptions}" th:value="${s.batchId}"
+                                        th:attr="data-warehouse=${s.warehouseId},data-barcode=${s.barcode}"
+                                        th:disabled="${formType.name()=='ISSUE' and s.expired}"
+                                        th:text="|${s.code} · ${s.material} · партия ${s.batch} · ${s.quantity.stripTrailingZeros().toPlainString()} ${s.unit} · ${s.warehouse}${s.expired ? ' · ПРОСРОЧЕНА' : ''}|">
+                                    </option>
+                                </select></label></div>
+                        <div th:if="${formType.name()=='RECEIPT'}"><label>Номер партии производителя
+                                (необязательно)<input name="lines[__index__].batchNumber" maxlength="100"></label></div>
+                        <div th:if="${formType.name()=='RECEIPT'}"><label>Годен до<input
+                                    name="lines[__index__].expiresOn" type="date"></label></div>
+                        <div th:if="${formType.name()=='RECEIPT'}"><label>Цена единицы (необязательно)<input
+                                    name="lines[__index__].purchaseUnitPrice" type="number" min="0"
+                                    step="0.0001"></label></div>
+                        <div><label>Количество<input name="lines[__index__].quantity" type="number" min="0.0001"
+                                    step="0.0001" required></label></div>
+                    </div><button class="button button-secondary remove-line" type="button">Убрать строку</button>
+                </fieldset>
+            </template>
+            <button class="button button-secondary" id="add-line" type="button">Добавить строку</button>
+            <div class="actions form-actions"><button class="button button-secondary" name="mode"
+                    value="draft">Сохранить черновик</button><button class="button" name="mode" value="post">Сохранить и
+                    провести</button><a class="text-link" th:href="@{/operations}">Отмена</a></div>
+        </form>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+    <script th:src="@{/js/inventory-form.js}" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>МедУчёт — Этикетка партии</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}">МедУчёт</a></header>
+    <main class="workspace">
+        <nav class="actions"><a class="text-link" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:href="@{/operations}">Документы</a></nav>
+        <h1>Этикетка партии</h1>
+        <p><strong th:text="${label.name}"></strong> · <span th:text="${label.materialCode}"></span></p>
+        <p>Номер партии / штрихкод: <strong th:text="${label.barcode}"></strong></p>
+        <img class="label-preview" th:src="@{/inventory/batches/{id}/label.png(id=${label.id})}"
+            alt="Предварительный просмотр этикетки 40 × 20 мм" width="320" height="160">
+        <p class="muted">TSC TDP-225 · 40 × 20 мм · 203 dpi. Длинные названия сокращаются на этикетке.</p>
+        <form id="label-print-form" class="editor-form"
+            th:attr="data-job-url=@{/inventory/batches/{id}/label-job(id=${label.id})}">
+            <button id="find-printers" class="button button-secondary" type="button">Подключить QZ Tray и найти
+                принтеры</button>
+            <label>Принтер<select id="label-printer" required>
+                    <option value="">Сначала подключите QZ Tray</option>
+                </select></label>
+            <label>Количество этикеток<input id="label-copies" type="number" min="1" max="100" value="1"
+                    required></label>
+            <label>Зазор между этикетками, мм<input id="label-gap" type="number" min="0" max="10" step="0.1" value="2"
+                    required></label>
+            <p class="muted">Укажите фактический зазор рулона. QZ Tray должен быть запущен на этом компьютере;
+                подтвердите запрос доступа. Первый раз напечатайте одну этикетку.</p>
+            <button id="print-label" class="button" type="submit" disabled>Печать этикеток</button>
+        </form>
+        <p id="label-status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2.5/qz-tray.js" defer></script>
+    <script th:src="@{/js/label-print.js}" defer></script>
+</body>
+
+</html>

@@ -10,10 +10,12 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.vkr.materials.repository.UserRepository;
 
-// Created only inside SecurityFilterChain, not registered as a second servlet filter.
 public class AccountStateFilter extends OncePerRequestFilter {
     private final UserRepository users;
-    public AccountStateFilter(UserRepository users) { this.users = users; }
+
+    public AccountStateFilter(UserRepository users) {
+        this.users = users;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -27,8 +29,9 @@ public class AccountStateFilter extends OncePerRequestFilter {
                 return;
             }
             String path = request.getServletPath();
-            // MockMvc and some servlet mappings supply an empty servletPath.
-            if (path.isEmpty()) { path = request.getRequestURI().substring(request.getContextPath().length()); }
+            if (path.isEmpty()) {
+                path = request.getRequestURI().substring(request.getContextPath().length());
+            }
             boolean allowed = path.equals("/change-password") || path.equals("/logout")
                     || path.startsWith("/css/") || path.equals("/favicon.ico");
             if (user.isPasswordChangeRequired() && !allowed) {

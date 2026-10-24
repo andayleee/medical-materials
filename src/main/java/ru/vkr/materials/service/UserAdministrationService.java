@@ -44,7 +44,6 @@ public class UserAdministrationService {
                 + query.toLowerCase(Locale.ROOT).replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
         return users.findAll((root, cq, cb) -> cb.or(
                 cb.like(cb.lower(root.get("login")), pattern, '\\'),
-                // initdb --locale=C does not case-fold Cyrillic, so normalize it explicitly.
                 cb.like(cb.function("translate", String.class, cb.lower(root.get("fullName")),
                         cb.literal("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"),
                         cb.literal("абвгдеёжзийклмнопрстуфхцчшщъыьэюя")), pattern, '\\')),

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Отчёт</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary">Выйти</button></form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <h1 th:text="${report.title}"></h1>
+        <p th:text="${report.description}"></p>
+        <p class="muted" th:if="${filterWarehouse}" th:text="|Склад: ${filterWarehouse}|"></p>
+        <p class="muted" th:if="${filterDepartment}" th:text="|Подразделение: ${filterDepartment}|"></p>
+        <p class="muted" th:if="${!#strings.isEmpty(q)}" th:text="|Поиск: ${q}|"></p>
+        <form class="report-filters no-print" method="get" th:action="@{${'/reports/'+kind}}">
+            <label th:if="${kind=='stocks'}">На дату<input name="date" type="date" th:value="${date}" required></label>
+            <label th:if="${kind=='movement' or kind=='issues'}">С<input name="from" type="date" th:value="${from}"
+                    required></label>
+            <label th:if="${kind=='movement' or kind=='issues'}">По<input name="to" type="date" th:value="${to}"
+                    required></label>
+            <label th:if="${kind=='expiry'}">Ближайшие дни<input name="days" type="number" min="1" max="365"
+                    th:value="${days}" required></label>
+            <label th:if="${kind=='expiry'}">Показать<select name="mode">
+                    <option value="all" th:selected="${mode=='all'}">Просроченные и истекающие</option>
+                    <option value="expired" th:selected="${mode=='expired'}">Только просроченные</option>
+                    <option value="soon" th:selected="${mode=='soon'}">Только истекающие</option>
+                </select></label>
+            <label th:if="${canOperate}">Склад<select name="warehouseId">
+                    <option value="">Все склады</option>
+                    <option th:each="w:${warehouses}" th:value="${w.id}" th:text="${w.name}"
+                        th:selected="${warehouseId==w.id}"></option>
+                </select></label>
+            <label th:if="${kind=='issues' and canOperate}">Подразделение<select name="departmentId">
+                    <option value="">Все подразделения</option>
+                    <option th:each="d:${departments}" th:value="${d.id}" th:text="${d.name}"
+                        th:selected="${departmentId==d.id}"></option>
+                </select></label>
+            <label>Код или материал<input name="q" th:value="${q}" maxlength="100"></label><button
+                class="button">Сформировать</button>
+        </form>
+        <p th:unless="${canOperate}" class="notice">Показаны только выдачи вашему подразделению.</p>
+        <div class="actions report-toolbar no-print"><button class="button button-secondary" type="button"
+                data-print>Печать / PDF</button>
+            <a class="button button-secondary" th:if="${kind=='expiry'}"
+                th:href="@{/reports/expiry.csv(days=${days},mode=${mode},warehouseId=${warehouseId},q=${q})}">CSV для
+                Excel</a>
+            <a class="button button-secondary" th:if="${kind=='stocks'}"
+                th:href="@{/reports/stocks.csv(date=${date},warehouseId=${warehouseId},q=${q})}">CSV для Excel</a>
+            <a class="button button-secondary" th:if="${kind=='movement'}"
+                th:href="@{/reports/movement.csv(from=${from},to=${to},warehouseId=${warehouseId},q=${q})}">CSV для
+                Excel</a>
+            <a class="button button-secondary" th:if="${kind=='issues'}"
+                th:href="@{/reports/issues.csv(from=${from},to=${to},warehouseId=${warehouseId},departmentId=${departmentId},q=${q})}">CSV
+                для Excel</a>
+        </div>
+        <p class="muted">Строк: <span th:text="${#lists.size(report.rows)}"></span>. Количества указаны в единицах
+            измерения каждого материала.</p>
+        <div class="table-scroll">
+            <table class="data-table">
+                <caption class="sr-only" th:text="${report.title}"></caption>
+                <thead>
+                    <tr>
+                        <th scope="col" th:each="column:${report.columns}" th:text="${column}"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row:${report.rows}"
+                        th:classappend="${#lists.contains(row,'Просрочена')}?'expired-row':(${#lists.contains(row,'Истекает')}?'expiring-row':'')">
+                        <td th:each="cell:${row}" th:text="${report.display(cell)}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(report.rows)}">
+                        <td th:colspan="${#lists.size(report.columns)}">По выбранным условиям данных нет.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+    <script th:src="@{/js/print.js}" defer></script>
+</body>
+
+</html>

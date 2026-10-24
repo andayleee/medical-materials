@@ -17,7 +17,9 @@ public class Category {
     @Column(name = "record_version", nullable = false)
     private long version;
 
-    public long getVersion() { return version; }
+    public long getVersion() {
+        return version;
+    }
 
     public Category() {
     }

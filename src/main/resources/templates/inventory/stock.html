@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — Остатки</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <nav class="actions" aria-label="Складской учёт"><a class="text-link" th:href="@{/dashboard}">Главная</a><a
+                class="text-link" th:href="@{/operations}">Документы</a><a class="text-link"
+                th:href="@{/operations/journal}">Журнал</a><a class="text-link" th:href="@{/reports}">Отчёты</a><a
+                class="text-link" th:if="${canOperate}" th:href="@{/inventory/stock}">Остатки</a><a class="text-link"
+                th:if="${canOperate}" th:href="@{/inventory/suppliers}">Поставщики</a></nav>
+        <div class="page-heading">
+            <h1>Остатки по партиям</h1><a class="button"
+                th:href="@{/inventory/documents/new(type='RECEIPT')}">Поступление</a>
+        </div>
+        <p class="muted">Учитываются только проведённые документы. Просроченные партии выделены; их можно списать.</p>
+        <form class="search-form" method="get" th:action="@{/inventory/stock}"><label for="q">Код, материал, партия или
+                штрихкод</label>
+            <div class="actions"><input id="q" name="q" th:value="${q}" maxlength="100"><button
+                    class="button">Найти</button></div>
+        </form>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Склад</th>
+                        <th>Материал</th>
+                        <th>Партия</th>
+                        <th>Годен до</th>
+                        <th>Остаток</th>
+                        <th>Цена единицы</th>
+                        <th>Этикетка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s:${stocks}" th:classappend="${s.expired}?'expired-row':''">
+                        <td th:text="${s.warehouse}"></td>
+                        <td><strong th:text="${s.code}"></strong><br><span th:text="${s.material}"></span></td>
+                        <td><strong th:text="${s.batch}"></strong><br><small th:if="${s.supplierBatch}"
+                                th:text="|Производитель: ${s.supplierBatch}|"></small></td>
+                        <td><span th:text="${s.expiresOn?:'—'}"></span><strong th:if="${s.expired}"> ·
+                                Просрочена</strong></td>
+                        <td><span th:text="${s.quantity.stripTrailingZeros().toPlainString()}"></span> <span
+                                th:text="${s.unit}"></span></td>
+                        <td th:text="${s.price?:'—'}"></td>
+                        <td><a class="text-link"
+                                th:href="@{/inventory/batches/{id}/label(id=${s.batchId})}">Этикетка</a><br><small
+                                th:text="${s.barcode}"></small></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(stocks)}">
+                        <td colspan="7">Остатков нет. Оформите и проведите поступление.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>

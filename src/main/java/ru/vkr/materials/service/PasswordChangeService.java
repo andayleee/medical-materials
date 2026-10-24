@@ -21,8 +21,6 @@ public class PasswordChangeService {
 
     @Transactional
     public void change(Long id, long expectedVersion, String current, String replacement, String confirmation) {
-        // Take the same table lock as administration before taking a row lock.
-        // This prevents a password-change/reset lock-order deadlock.
         entityManager.createNativeQuery("LOCK TABLE users IN SHARE ROW EXCLUSIVE MODE").executeUpdate();
         var user = users.findLockedById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Учётная запись не найдена."));

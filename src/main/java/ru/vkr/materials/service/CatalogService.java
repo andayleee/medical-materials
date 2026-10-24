@@ -102,7 +102,7 @@ public class CatalogService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void saveUnit(Long id, UnitForm f) {
-        Unit u = id == null ? new Unit() : unit(id);
+        Unit u = id == null ? new Unit() : units.findLockedById(id).orElseThrow(() -> missing("Единица измерения"));
         if (id != null) {
             checkVersion(u.getVersion(), f.getVersion());
         }
@@ -129,7 +129,7 @@ public class CatalogService {
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'STOREKEEPER')")
     public void saveMaterial(Long id, MaterialForm f) {
-        Material m = id == null ? new Material() : material(id);
+        Material m = id == null ? new Material() : materials.findLockedById(id).orElseThrow(() -> missing("Материал"));
         if (id != null) {
             checkVersion(m.getVersion(), f.getVersion());
             if ((!m.getUnit().getId().equals(f.getUnitId()) || m.isHasExpiry() != f.isHasExpiry())

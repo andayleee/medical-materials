@@ -1,21 +1,54 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>МедУчёт — учётная запись</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МедУчёт — учётная запись</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
 <body>
-<header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span> МедУчёт</a><form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button></form></header>
-<main class="workspace">
-    <a class="text-link" th:href="@{/admin/users}">← Пользователи</a>
-    <h1 th:text="${userId == null ? 'Новый пользователь' : 'Редактирование пользователя'}"></h1>
-    <form class="editor-form" th:object="${userForm}" th:action="${userId == null} ? @{/admin/users} : @{/admin/users/{id}(id=${userId})}" method="post">
-        <div class="message message-error" role="alert" th:if="${#fields.hasErrors('*')}"><ul><li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li></ul></div>
-        <input type="hidden" th:field="*{version}">
-        <label for="login">Логин</label><input id="login" th:field="*{login}" autocomplete="off" pattern="[a-zA-Z0-9._\-]{3,100}" maxlength="100" required><small class="muted">Латинские буквы, цифры, точка, дефис и подчёркивание. От 3 символов.</small>
-        <label for="fullName">Имя / ФИО</label><input id="fullName" th:field="*{fullName}" maxlength="255" required>
-        <label for="role">Роль</label><select id="role" th:field="*{role}" required><option value="">Выберите роль</option><option th:each="role : ${roles}" th:value="${role.key}" th:text="${role.value}"></option></select>
-        <label for="departmentId">Подразделение</label><select id="departmentId" th:field="*{departmentId}"><option value="">Без подразделения</option><option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.name}"></option></select><small class="muted">Для сотрудника подразделения выбор обязателен.</small>
-        <label class="checkbox-label"><input type="checkbox" th:field="*{active}"> Учётная запись активна</label>
-        <label for="temporaryPassword" th:text="${userId == null ? 'Временный пароль' : 'Новый временный пароль (необязательно)'}"></label><input id="temporaryPassword" name="temporaryPassword" type="password" autocomplete="new-password" minlength="10" maxlength="72" th:required="${userId == null}"><small class="muted" th:text="${userId == null ? 'Не менее 10 символов, не более 72 байт UTF-8. Передайте пароль пользователю: при первом входе он задаст свой.' : 'Оставьте пустым, чтобы сохранить пароль. Если задать новый, пользователь должен будет заменить его при входе.'}"></small>
-        <div class="actions"><button class="button" type="submit">Сохранить</button><a class="text-link" th:href="@{/admin/users}">Отмена</a></div>
-    </form>
-</main><footer class="footer">МедУчёт · Медицинская лаборатория</footer>
-</body></html>
+    <header class="header"><a class="brand" th:href="@{/dashboard}"><span class="brand-icon" aria-hidden="true"></span>
+            МедУчёт</a>
+        <form th:action="@{/logout}" method="post"><button class="button button-secondary" type="submit">Выйти</button>
+        </form>
+    </header>
+    <main class="workspace">
+        <a class="text-link" th:href="@{/admin/users}">← Пользователи</a>
+        <h1 th:text="${userId == null ? 'Новый пользователь' : 'Редактирование пользователя'}"></h1>
+        <form class="editor-form" th:object="${userForm}"
+            th:action="${userId == null} ? @{/admin/users} : @{/admin/users/{id}(id=${userId})}" method="post">
+            <div class="message message-error" role="alert" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li>
+                </ul>
+            </div>
+            <input type="hidden" th:field="*{version}">
+            <label for="login">Логин</label><input id="login" th:field="*{login}" autocomplete="off"
+                pattern="[a-zA-Z0-9._\-]{3,100}" maxlength="100" required><small class="muted">Латинские буквы, цифры,
+                точка, дефис и подчёркивание. От 3 символов.</small>
+            <label for="fullName">Имя / ФИО</label><input id="fullName" th:field="*{fullName}" maxlength="255" required>
+            <label for="role">Роль</label><select id="role" th:field="*{role}" required>
+                <option value="">Выберите роль</option>
+                <option th:each="role : ${roles}" th:value="${role.key}" th:text="${role.value}"></option>
+            </select>
+            <label for="departmentId">Подразделение</label><select id="departmentId" th:field="*{departmentId}">
+                <option value="">Без подразделения</option>
+                <option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.name}">
+                </option>
+            </select><small class="muted">Для сотрудника подразделения выбор обязателен.</small>
+            <label class="checkbox-label"><input type="checkbox" th:field="*{active}"> Учётная запись активна</label>
+            <label for="temporaryPassword"
+                th:text="${userId == null ? 'Временный пароль' : 'Новый временный пароль (необязательно)'}"></label><input
+                id="temporaryPassword" name="temporaryPassword" type="password" autocomplete="new-password"
+                minlength="10" maxlength="72" th:required="${userId == null}"><small class="muted"
+                th:text="${userId == null ? 'Не менее 10 символов, не более 72 байт UTF-8. Передайте пароль пользователю: при первом входе он задаст свой.' : 'Оставьте пустым, чтобы сохранить пароль. Если задать новый, пользователь должен будет заменить его при входе.'}"></small>
+            <div class="actions"><button class="button" type="submit">Сохранить</button><a class="text-link"
+                    th:href="@{/admin/users}">Отмена</a></div>
+        </form>
+    </main>
+    <footer class="footer">МедУчёт · Медицинская лаборатория</footer>
+</body>
+
+</html>
